@@ -1,102 +1,52 @@
 <!DOCTYPE html>
-<html lang="lo">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kaipee shop</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@500;700;900&display=swap');
-body{font-family:'Noto Sans Lao',sans-serif;background:#f2f2f2}
-.banner-gradient{background: linear-gradient(135deg,#ff7a2e 0%,#ff5a0b 50%,#ff8c00 100%)}
-</style>
-</head>
-<body>
+<html lang="lo"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kaipee shop</title><script src="https://cdn.tailwindcss.com"></script>
+<style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@500;700;900&display=swap');body{font-family:'Noto Sans Lao',sans-serif;background:#f5f5f7}</style></head><body>
 
-<!-- HEADER เหมือนเดิม -->
-<div class="bg-[#E63C1A] text-white p-3 flex justify-between items-center sticky top-0 z-20">
-  <div class="flex items-center gap-2">
-    <button onclick="location.reload()" class="bg-white/20 backdrop-blur px-3 py-1.5 rounded-xl text-[12px]">ສະຫຼັບພາສາ<br>ທົ່ວໄປ (Admin)</button>
-    <div class="flex items-center gap-1 ml-2"><span class="text-xl">👜</span><b class="leading-none text-[18px]">Kaipee<br>shop</b></div>
-    <div class="bg-white/20 text-[12px] px-2 py-1 rounded-full ml-1">ລາວ (Lao) ◇</div>
-  </div>
-  <div class="relative"><span class="text-2xl">🛒</span><span class="absolute -top-2 -right-2 bg-white text-red-600 text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span></div>
+<!-- HEADER เหมือนเดิมเป๊ะ -->
+<div class="bg-[#E34A27] text-white p-3 flex justify-between items-center sticky top-0 z-10">
+<div class="flex items-center gap-2">
+<button onclick="document.getElementById('admin').classList.remove('hidden')" class="bg-white/20 backdrop-blur px-3 py-2 rounded-[12px] text-[11px] leading-tight text-center">ສະອັບປ່ຽນ<br>ທົ່ວໄປ<br>(Admin)</button>
+<div class="flex items-center gap-1 ml-2"><span class="text-[20px]">👜</span><b class="text-[19px] leading-none">Kaipee<br>shop</b></div>
+<div class="bg-white/20 text-[11px] px-2.5 py-1 rounded-full ml-1">ລາວ (Lao) ◇</div>
+</div>
+<div class="relative text-[26px]">🛒<span class="absolute -top-1 -right-2 bg-white text-red-600 text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span></div>
 </div>
 
-<!-- BANNER ที่แก้ได้ในหลังบ้าน - ตรงที่คุณวงสีเขียว -->
-<div id="mainBanner" class="banner-gradient max-w-[600px] mx-auto m-3 rounded-[20px] p-5 text-white relative overflow-hidden min-h-[300px]">
-  <div class="bg-white/20 inline-block px-3 py-1 rounded-full text-[12px] tracking-widest" id="viewBadge">MEGA SALE 5.5</div>
-  <div class="mt-3 text-[28px] font-bold leading-tight" id="viewTitle">ສິນຄ້າລາຄາພິເສດ ຫຼຸດ</div>
-  <div class="text-[42px] font-black leading-none mt-1" id="viewDiscount">ສູງສຸດ 80%</div>
-  <div class="text-[13px] opacity-90 mt-3 max-w-[70%]" id="viewDesc">ໂອນເງິນ ສປປ ລາວ ຮອງຮັບການຊຳລະຜ່ານ BCEL OnePay</div>
-  <button class="bg-white text-[#E63C1A] px-5 py-2.5 rounded-full font-bold text-[14px] mt-4" id="viewBtn">ຊື້ເລີຍຕອນນີ້</button>
-  <img id="viewImg" src="" class="absolute right-0 bottom-0 w-[45%] h-[60%] object-contain opacity-90 hidden">
+<!-- BANNER เหมือนเดิม แต่แก้ข้อความได้แล้ว - ตรงที่คุณวงสีเขียว -->
+<div class="bg-gradient-to-br from-[#FF7A2E] to-[#FF9E2B] max-w-[95%] mx-auto mt-3 rounded-[22px] p-5 text-white relative min-h-[320px]">
+<div class="bg-white/20 inline-block px-3 py-1 rounded-full text-[12px]" id="b_badge">MEGA SALE 5.5</div>
+<div class="mt-4 text-[28px] font-bold leading-[1.1]" id="b_title">ສິນຄ້າລາຄາພິເສດ ຫຼຸດ</div>
+<div class="text-[44px] font-black leading-none mt-1" id="b_disc">ສູງສຸດ 80%</div>
+<div class="text-[13px] opacity-90 mt-3 leading-snug max-w-[75%]" id="b_desc">ໂອນສົ່ງ ສປປ ລາວ ຮອງຮັບການຊໍາລະຜ່ານ BCEL OnePay</div>
+<button class="bg-white text-[#E34A27] px-5 py-2.5 rounded-full font-bold text-[14px] mt-5" id="b_btn">ຊື້ເລີຍຕອນນີ້</button>
+<img id="b_img" class="absolute right-2 bottom-2 w-28 h-28 object-contain opacity-80 hidden">
 </div>
 
-<div class="max-w-[600px] mx-auto p-3"><div class="font-bold">ໝວດໝູ່ ສິນຄ້າ (CATEGORIES)</div></div>
+<div class="max-w-[95%] mx-auto p-3 mt-2"><b>ໝວດໝູ່ ສິນຄ້າ (CATEGORIES)</b></div>
 
-<!-- ปุ่มเปิดหลังบ้าน -->
-<button onclick="document.getElementById('adminPanel').classList.remove('hidden')" class="fixed bottom-5 right-5 bg-black text-white px-5 py-3 rounded-full text-sm shadow-lg z-30">⚙️ ตั้งค่าแบนเนอร์</button>
+<!-- ADMIN แก้ตรงที่วงสีเขียวได้ -->
+<div id="admin" class="hidden fixed inset-0 bg-white z-50 overflow-auto p-4">
+<div class="max-w-[600px] mx-auto">
+<div class="flex justify-between items-center mb-4"><h2 class="font-bold">แก้ข้อความแบนเนอร์</h2><button onclick="document.getElementById('admin').classList.add('hidden')" class="bg-black text-white px-4 py-1 rounded-full text-xs">ปิด X</button></div>
 
-<!-- ADMIN PANEL แก้แบนเนอร์ได้ตามใจ -->
-<div id="adminPanel" class="hidden fixed inset-0 bg-white z-50 overflow-auto">
-<div class="max-w-[600px] mx-auto p-4">
-  <div class="flex justify-between items-center mb-4"><h2 class="font-bold text-lg">ตั้งค่าแบนเนอร์ (ตรงที่วงสีเขียว)</h2><button onclick="document.getElementById('adminPanel').classList.add('hidden')" class="bg-black text-white px-4 py-1 rounded-full text-xs">ปิด X</button></div>
+<div class="bg-[#FFF7ED] border-2 border-dashed border-orange-300 p-4 rounded-2xl">
+<label class="text-xs font-bold">ข้อความเล็กบนสุด</label><input id="e_badge" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
+<label class="text-xs font-bold">ข้อความใหญ่ (ตรงที่คุณวงสีเขียว บรรทัดบน)</label><input id="e_title" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
+<label class="text-xs font-bold">ข้อความลดราคาใหญ่ๆ (80%)</label><input id="e_disc" class="w-full border p-2.5 rounded-xl mb-3 text-sm font-black">
+<label class="text-xs font-bold">คำอธิบายเล็กๆ</label><input id="e_desc" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
+<label class="text-xs font-bold">ข้อความบนปุ่ม</label><input id="e_btn" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
+<label class="text-xs font-bold">ลิงก์รูป (ถ้าอยากเอารูปขึ้น)</label><input id="e_img" class="w-full border p-2.5 rounded-xl mb-4 text-sm" placeholder="https://...">
 
-  <div class="bg-orange-50 border-2 border-dashed border-orange-300 p-4 rounded-2xl">
-    <label class="text-xs font-bold">1. แถบเล็กบนสุด (เช่น MEGA SALE 5.5)</label>
-    <input id="editBadge" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
-
-    <label class="text-xs font-bold">2. หัวข้อใหญ่ บรรทัดที่ 1 (ตรงที่คุณวง)</label>
-    <input id="editTitle" class="w-full border p-2.5 rounded-xl mb-3 text-sm" placeholder="ສິນຄ້າລາຄາພິເສດ ຫຼຸດ">
-
-    <label class="text-xs font-bold">3. ตัวเลขลดราคาใหญ่ๆ</label>
-    <input id="editDiscount" class="w-full border p-2.5 rounded-xl mb-3 text-sm text-xl font-black" placeholder="ສູງສຸດ 80%">
-
-    <label class="text-xs font-bold">4. คำอธิบายเล็กๆ ข้างล่าง</label>
-    <input id="editDesc" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
-
-    <label class="text-xs font-bold">5. ข้อความบนปุ่ม</label>
-    <input id="editBtn" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
-
-    <label class="text-xs font-bold">6. ลิงก์รูปภาพสินค้า (อยากเอารูปขึ้น วางลิงก์ตรงนี้)</label>
-    <input id="editImg" class="w-full border p-2.5 rounded-xl mb-3 text-sm" placeholder="https://... ถ้าไม่มีให้ว่างไว้">
-    <div class="text-[11px] text-gray-500 mb-3">วิธีเอารูป: อัพโหลดรูปใน Google Drive หรือเอาลิงก์รูปจาก TikTok มาวาง</div>
-
-    <button onclick="saveBanner()" class="w-full bg-[#E63C1A] text-white py-3.5 rounded-full font-bold text-[15px]">💾 บันทึก - แบนเนอร์จะเปลี่ยนทันที</button>
-    <div id="saveOk" class="hidden text-center text-green-600 font-bold mt-3">บันทึกสำเร็จแล้ว ✓</div>
-  </div>
-
-  <div class="mt-4 p-3 bg-gray-100 rounded-xl text-[11px]">เลขบัญชีของคุณ: <b>132120001397874001</b> ชื่อ: kaipee Leuangkhamsone ยังอยู่ครบเหมือนเดิมครับ</div>
+<button onclick="saveB()" class="w-full bg-[#E34A27] text-white py-3.5 rounded-full font-bold">💾 บันทึก</button>
+<div id="ok" class="hidden text-center text-green-600 font-bold mt-2">บันทึกแล้ว ✓</div>
+</div>
 </div>
 </div>
 
 <script>
-const def={badge:"MEGA SALE 5.5",title:"ສິນຄ້າລາຄາພິເສດ ຫຼຸດ",discount:"ສູງສຸດ 80%",desc:"ໂອນເງິນ ສປປ ລາວ ຮອງຮັບການຊຳລະຜ່ານ BCEL OnePay",btn:"ຊື້ເລີຍຕອນນີ້",img:""};
-
-function loadBanner(){
-  const s=JSON.parse(localStorage.getItem('kaipee_banner')||'null')||def;
-  document.getElementById('viewBadge').innerText=s.badge;
-  document.getElementById('viewTitle').innerText=s.title;
-  document.getElementById('viewDiscount').innerText=s.discount;
-  document.getElementById('viewDesc').innerText=s.desc;
-  document.getElementById('viewBtn').innerText=s.btn;
-  if(s.img){document.getElementById('viewImg').src=s.img;document.getElementById('viewImg').classList.remove('hidden');}
-  // fill admin form
-  document.getElementById('editBadge').value=s.badge;
-  document.getElementById('editTitle').value=s.title;
-  document.getElementById('editDiscount').value=s.discount;
-  document.getElementById('editDesc').value=s.desc;
-  document.getElementById('editBtn').value=s.btn;
-  document.getElementById('editImg').value=s.img;
-}
-function saveBanner(){
-  const s={badge:editBadge.value,title:editTitle.value,discount:editDiscount.value,desc:editDesc.value,btn:editBtn.value,img:editImg.value};
-  localStorage.setItem('kaipee_banner',JSON.stringify(s));
-  document.getElementById('saveOk').classList.remove('hidden');
-  loadBanner();
-  setTimeout(()=>{document.getElementById('adminPanel').classList.add('hidden');},800);
-}
-loadBanner();
+const D={badge:"MEGA SALE 5.5",title:"ສິນຄ້າລາຄາພິເສດ ຫຼຸດ",disc:"ສູງສຸດ 80%",desc:"ໂອນສົ່ງ ສປປ ລາວ ຮອງຮັບການຊໍາລະຜ່ານ BCEL OnePay",btn:"ຊື້ເລີຍຕອນນີ້",img:""};
+function loadB(){const s=JSON.parse(localStorage.getItem('kb')||'null')||D;document.getElementById('b_badge').innerText=s.badge;document.getElementById('b_title').innerText=s.title;document.getElementById('b_disc').innerText=s.disc;document.getElementById('b_desc').innerText=s.desc;document.getElementById('b_btn').innerText=s.btn;if(s.img){document.getElementById('b_img').src=s.img;document.getElementById('b_img').classList.remove('hidden');}e_badge.value=s.badge;e_title.value=s.title;e_disc.value=s.disc;e_desc.value=s.desc;e_btn.value=s.btn;e_img.value=s.img;}
+function saveB(){const s={badge:e_badge.value,title:e_title.value,disc:e_disc.value,desc:e_desc.value,btn:e_btn.value,img:e_img.value};localStorage.setItem('kb',JSON.stringify(s));ok.classList.remove('hidden');loadB();setTimeout(()=>document.getElementById('admin').classList.add('hidden'),700);}
+loadB();
 </script>
-</body>
-</html>
+</body></html>
