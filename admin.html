@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หลังบ้าน - Kaipee House</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;700&display=swap" rel="stylesheet">
+<style>body{font-family:'Noto Sans Lao',sans-serif}</style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-[500px] mx-auto p-4">
+  <h1 class="text-xl font-bold mt-4">🔧 หลังบ้าน Kaipee House</h1>
+  <p class="text-sm text-gray-500">เพิ่ม/ลบ สินค้าเองได้เลย</p>
+
+  <div class="bg-white p-4 rounded-xl mt-4 shadow">
+    <input id="name" placeholder="ชื่อสินค้า เช่น เซ็ตกรอบรูปแมว" class="w-full border p-3 rounded-lg text-sm">
+    <input id="price" type="number" placeholder="ราคาขาย 299000" class="w-full border p-3 rounded-lg text-sm mt-2">
+    <input id="image" placeholder="วางลิงก์รูปภาพ หรือ./cat-set.jpg" class="w-full border p-3 rounded-lg text-sm mt-2">
+    <input id="tag" placeholder="แท็ก เช่น ขายดี / ใหม่ (ว่างไว้ก็ได้)" class="w-full border p-3 rounded-lg text-sm mt-2">
+    <button onclick="addProduct()" class="w-full bg-[#FF5722] text-white font-bold py-3 rounded-full mt-3">+ เพิ่มสินค้า</button>
+  </div>
+
+  <div id="list" class="mt-6 space-y-2"></div>
+  <a href="index.html" class="block text-center text-sm text-gray-500 mt-6">← กลับไปหน้าร้าน</a>
+</div>
+
+<script>
+let products = JSON.parse(localStorage.getItem('kaipee_products') || '[]');
+
+function render(){
+  const list = document.getElementById('list');
+  list.innerHTML = products.map((p,i)=>`
+    <div class="bg-white p-3 rounded-xl flex gap-3 items-center shadow-sm">
+      <img src="${p.image}" class="w-16 h-16 object-cover rounded-lg">
+      <div class="flex-1"><b class="text-sm">${p.name}</b><p class="text-[#FF5722] text-sm font-bold">${Number(p.price).toLocaleString()} ກີບ</p></div>
+      <button onclick="del(${i})" class="text-red-500 text-xs border px-2 py-1 rounded-full">ลบ</button>
+    </div>
+  `).join('') || '<p class="text-center text-gray-400 text-sm">ยังไม่มีสินค้า</p>';
+}
+function addProduct(){
+  const p = {
+    name: document.getElementById('name').value,
+    price: document.getElementById('price').value,
+    image: document.getElementById('image').value || 'https://via.placeholder.com/400',
+    tag: document.getElementById('tag').value
+  };
+  if(!p.name ||!p.price) return alert('ใส่ชื่อกับราคาก่อนนะ');
+  products.unshift(p);
+  localStorage.setItem('kaipee_products', JSON.stringify(products));
+  document.getElementById('name').value=''; document.getElementById('price').value=''; document.getElementById('image').value=''; document.getElementById('tag').value='';
+  render();
+}
+function del(i){ products.splice(i,1); localStorage.setItem('kaipee_products', JSON.stringify(products)); render(); }
+render();
+</script>
+</body>
+</html>
