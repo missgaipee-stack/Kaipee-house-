@@ -1,52 +1,1205 @@
 <!DOCTYPE html>
-<html lang="lo"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kaipee shop</title><script src="https://cdn.tailwindcss.com"></script>
-<style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@500;700;900&display=swap');body{font-family:'Noto Sans Lao',sans-serif;background:#f5f5f7}</style></head><body>
+<html lang="lo" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaipee House - Online Store & Admin Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        shopee: {
+                            orange: '#EE4D2D',
+                            dark: '#D73211',
+                            light: '#FFF0ED'
+                        },
+                        bcel: {
+                            blue: '#003366',
+                            red: '#ED1C24'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Print sizing styles */
+        @media print {
+            body * { visibility: hidden; }
+            #printable-shipping-label, #printable-shipping-label * { visibility: visible; }
+            #printable-shipping-label { 
+                position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0;
+                box-shadow: none !important; border: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-100 text-slate-800 flex flex-col">
 
-<!-- HEADER เหมือนเดิมเป๊ะ -->
-<div class="bg-[#E34A27] text-white p-3 flex justify-between items-center sticky top-0 z-10">
-<div class="flex items-center gap-2">
-<button onclick="document.getElementById('admin').classList.remove('hidden')" class="bg-white/20 backdrop-blur px-3 py-2 rounded-[12px] text-[11px] leading-tight text-center">ສະອັບປ່ຽນ<br>ທົ່ວໄປ<br>(Admin)</button>
-<div class="flex items-center gap-1 ml-2"><span class="text-[20px]">👜</span><b class="text-[19px] leading-none">Kaipee<br>shop</b></div>
-<div class="bg-white/20 text-[11px] px-2.5 py-1 rounded-full ml-1">ລາວ (Lao) ◇</div>
-</div>
-<div class="relative text-[26px]">🛒<span class="absolute -top-1 -right-2 bg-white text-red-600 text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span></div>
-</div>
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-shopee-orange to-shopee-dark text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleView()" class="bg-white/25 hover:bg-white/35 px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center space-x-2 shadow-sm">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span id="view-toggle-text">ສະຫຼັບປ່ຽນໄປຫຼັງບ້ານ (Admin)</span>
+                </button>
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="switchMode('store')">
+                    <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                    <span id="store-brand-name" class="text-lg md:text-xl font-bold tracking-tight">KaipeeHouse</span>
+                </div>
+            </div>
 
-<!-- BANNER เหมือนเดิม แต่แก้ข้อความได้แล้ว - ตรงที่คุณวงสีเขียว -->
-<div class="bg-gradient-to-br from-[#FF7A2E] to-[#FF9E2B] max-w-[95%] mx-auto mt-3 rounded-[22px] p-5 text-white relative min-h-[320px]">
-<div class="bg-white/20 inline-block px-3 py-1 rounded-full text-[12px]" id="b_badge">MEGA SALE 5.5</div>
-<div class="mt-4 text-[28px] font-bold leading-[1.1]" id="b_title">ສິນຄ້າລາຄາພິເສດ ຫຼຸດ</div>
-<div class="text-[44px] font-black leading-none mt-1" id="b_disc">ສູງສຸດ 80%</div>
-<div class="text-[13px] opacity-90 mt-3 leading-snug max-w-[75%]" id="b_desc">ໂອນສົ່ງ ສປປ ລາວ ຮອງຮັບການຊໍາລະຜ່ານ BCEL OnePay</div>
-<button class="bg-white text-[#E34A27] px-5 py-2.5 rounded-full font-bold text-[14px] mt-5" id="b_btn">ຊື້ເລີຍຕອນນີ້</button>
-<img id="b_img" class="absolute right-2 bottom-2 w-28 h-28 object-contain opacity-80 hidden">
-</div>
+            <!-- Store Search & Cart Controls -->
+            <div id="store-header-controls" class="hidden md:flex items-center space-x-4 flex-1 max-w-xl mx-6">
+                <div class="relative w-full">
+                    <input type="text" id="search-input" oninput="handleSearch()" placeholder="ຄົ້ນຫາສິນຄ້າ, ໝວດໝູ່..." class="w-full py-2 px-4 pr-10 rounded-xl text-slate-800 focus:outline-none text-sm shadow-inner">
+                    <button class="absolute right-3 top-2.5 text-slate-400 hover:text-shopee-orange">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+                <button onclick="openCartModal()" class="relative p-2.5 hover:bg-white/15 rounded-xl transition">
+                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-white text-shopee-orange text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                </button>
+            </div>
 
-<div class="max-w-[95%] mx-auto p-3 mt-2"><b>ໝວດໝູ່ ສິນຄ້າ (CATEGORIES)</b></div>
+            <!-- Language Switcher -->
+            <div class="flex items-center space-x-3">
+                <select id="lang-switcher" onchange="changeLanguage(this.value)" class="bg-white/20 text-white border-0 rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer">
+                    <option value="lo" class="text-slate-800" selected>ລາວ (Lao)</option>
+                    <option value="th" class="text-slate-800">ไทย (Thai)</option>
+                    <option value="en" class="text-slate-800">English</option>
+                </select>
+                <div class="md:hidden">
+                    <button onclick="openCartModal()" class="relative p-2 hover:bg-white/10 rounded-full text-white">
+                        <i class="fa-solid fa-cart-shopping text-lg"></i>
+                        <span id="cart-badge-mob" class="absolute -top-1 -right-1 bg-white text-shopee-orange text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
 
-<!-- ADMIN แก้ตรงที่วงสีเขียวได้ -->
-<div id="admin" class="hidden fixed inset-0 bg-white z-50 overflow-auto p-4">
-<div class="max-w-[600px] mx-auto">
-<div class="flex justify-between items-center mb-4"><h2 class="font-bold">แก้ข้อความแบนเนอร์</h2><button onclick="document.getElementById('admin').classList.add('hidden')" class="bg-black text-white px-4 py-1 rounded-full text-xs">ปิด X</button></div>
+    <main class="flex-1 overflow-y-auto">
+        <!-- CUSTOMER STOREFRONT VIEW -->
+        <div id="store-view" class="max-w-7xl mx-auto px-4 py-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-6 md:p-10 text-white mb-8 shadow-lg flex flex-col md:flex-row items-center justify-between">
+                <div class="space-y-4 max-w-lg mb-6 md:mb-0">
+                    <span class="bg-white/20 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">ເລືອກແບບທີ່ມັກໃສ່ກະຕ່າໄດ້ເລີຍ</span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">ສະບາຍດີ ຮ້ານໄກ່ປີ່ ຍິນດີຕ້ອນຮັບ</h1>
+                    <p class="text-white/90 text-sm md:text-base">ຮອງຮັບການຊຳລະຜ່ານ BCEL OnePay</p>
+                    <button onclick="filterByCategory('all')" class="bg-white text-shopee-orange font-bold px-6 py-2.5 rounded-xl shadow hover:bg-orange-50 transition">ຊື້ເລີຍຕອນນີ້</button>
+                </div>
+                <div class="w-full md:w-auto text-center">
+                    <i class="fa-solid fa-qrcode text-8xl md:text-9xl text-white/20 drop-shadow-lg"></i>
+                </div>
+            </div>
 
-<div class="bg-[#FFF7ED] border-2 border-dashed border-orange-300 p-4 rounded-2xl">
-<label class="text-xs font-bold">ข้อความเล็กบนสุด</label><input id="e_badge" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
-<label class="text-xs font-bold">ข้อความใหญ่ (ตรงที่คุณวงสีเขียว บรรทัดบน)</label><input id="e_title" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
-<label class="text-xs font-bold">ข้อความลดราคาใหญ่ๆ (80%)</label><input id="e_disc" class="w-full border p-2.5 rounded-xl mb-3 text-sm font-black">
-<label class="text-xs font-bold">คำอธิบายเล็กๆ</label><input id="e_desc" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
-<label class="text-xs font-bold">ข้อความบนปุ่ม</label><input id="e_btn" class="w-full border p-2.5 rounded-xl mb-3 text-sm">
-<label class="text-xs font-bold">ลิงก์รูป (ถ้าอยากเอารูปขึ้น)</label><input id="e_img" class="w-full border p-2.5 rounded-xl mb-4 text-sm" placeholder="https://...">
+            <!-- Categories Section -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-bold text-slate-800 uppercase tracking-wide">ໝວດໝູ່ສິນຄ້າ (Categories)</h2>
+                </div>
+                <div id="store-category-list" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-4"></div>
+            </div>
 
-<button onclick="saveB()" class="w-full bg-[#E34A27] text-white py-3.5 rounded-full font-bold">💾 บันทึก</button>
-<div id="ok" class="hidden text-center text-green-600 font-bold mt-2">บันทึกแล้ว ✓</div>
-</div>
-</div>
-</div>
+            <!-- Product Filter & Sort Bar -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-4 rounded-2xl shadow-sm mb-6 gap-4">
+                <div class="flex items-center space-x-2 text-sm text-slate-600">
+                    <span>ສະແດງສິນຄ້າທັງໝົດ: <strong id="product-count" class="text-shopee-orange">0</strong> ລາຍການ</span>
+                </div>
+                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                    <span class="text-sm text-slate-500">ຮຽງຕາມ:</span>
+                    <select id="sort-select" onchange="sortProducts()" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-shopee-orange">
+                        <option value="default">ຍອດນິຍົມ / ແນະນຳ</option>
+                        <option value="price-asc">ລາຄາ: ຕໍ່າ -> ສູງ</option>
+                        <option value="price-desc">ລາຄາ: ສູງ -> ຕໍ່າ</option>
+                        <option value="sales">ຂາຍດີທີ່ສຸດ</option>
+                    </select>
+                </div>
+            </div>
 
-<script>
-const D={badge:"MEGA SALE 5.5",title:"ສິນຄ້າລາຄາພິເສດ ຫຼຸດ",disc:"ສູງສຸດ 80%",desc:"ໂອນສົ່ງ ສປປ ລາວ ຮອງຮັບການຊໍາລະຜ່ານ BCEL OnePay",btn:"ຊື້ເລີຍຕອນນີ້",img:""};
-function loadB(){const s=JSON.parse(localStorage.getItem('kb')||'null')||D;document.getElementById('b_badge').innerText=s.badge;document.getElementById('b_title').innerText=s.title;document.getElementById('b_disc').innerText=s.disc;document.getElementById('b_desc').innerText=s.desc;document.getElementById('b_btn').innerText=s.btn;if(s.img){document.getElementById('b_img').src=s.img;document.getElementById('b_img').classList.remove('hidden');}e_badge.value=s.badge;e_title.value=s.title;e_disc.value=s.disc;e_desc.value=s.desc;e_btn.value=s.btn;e_img.value=s.img;}
-function saveB(){const s={badge:e_badge.value,title:e_title.value,disc:e_disc.value,desc:e_desc.value,btn:e_btn.value,img:e_img.value};localStorage.setItem('kb',JSON.stringify(s));ok.classList.remove('hidden');loadB();setTimeout(()=>document.getElementById('admin').classList.add('hidden'),700);}
-loadB();
-</script>
-</body></html>
+            <!-- Product Grid -->
+            <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"></div>
+        </div>
+
+        <!-- ADMIN BACKOFFICE VIEW (Hidden by default) -->
+        <div id="admin-view" class="hidden max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row gap-6">
+            <!-- Admin Sidebar Navigation -->
+            <aside class="w-full md:w-64 bg-white rounded-2xl shadow-sm p-4 h-fit space-y-2">
+                <div class="text-xs font-bold text-slate-400 uppercase px-3 mb-2 tracking-wider">ລະບົບຫຼັງບ້ານ (Backoffice)</div>
+                
+                <button onclick="switchAdminTab('dashboard')" id="admin-nav-dashboard" class="admin-nav-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-orange-50 hover:text-shopee-orange transition">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    <span>ພາບລວມ & ສະຖິຕິ (Overview)</span>
+                </button>
+                <button onclick="switchAdminTab('categories')" id="admin-nav-categories" class="admin-nav-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-orange-50 hover:text-shopee-orange transition">
+                    <i class="fa-solid fa-folder-tree w-5"></i>
+                    <span>ໝວດໝູ່ສິນຄ້າ (Categories)</span>
+                </button>
+                <button onclick="switchAdminTab('products')" id="admin-nav-products" class="admin-nav-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-orange-50 hover:text-shopee-orange transition">
+                    <i class="fa-solid fa-box-archive w-5"></i>
+                    <span>ຈັດການສິນຄ້າ (Products)</span>
+                </button>
+                <button onclick="switchAdminTab('orders')" id="admin-nav-orders" class="admin-nav-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-orange-50 hover:text-shopee-orange transition">
+                    <i class="fa-solid fa-receipt w-5"></i>
+                    <span>ຄຳສັ່ງຊື້ & ປຣິ້ນໃບບິນ (Orders)</span>
+                </button>
+                <button onclick="switchAdminTab('payment')" id="admin-nav-payment" class="admin-nav-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-orange-50 hover:text-shopee-orange transition">
+                    <i class="fa-solid fa-qrcode w-5"></i>
+                    <span>ຕັ້ງຄ່າ BCEL OnePay QR</span>
+                </button>
+                <button onclick="switchAdminTab('settings')" id="admin-nav-settings" class="admin-nav-btn w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-orange-50 hover:text-shopee-orange transition">
+                    <i class="fa-solid fa-gear w-5"></i>
+                    <span>ຕັ້ງຄ່າຮ້ານຄ້າ (Settings)</span>
+                </button>
+            </aside>
+
+            <!-- Admin Tab Contents -->
+            <div class="flex-1 space-y-6">
+                <!-- 1. Dashboard Tab with Customer History & Carrier Icons -->
+                <div id="admin-tab-dashboard" class="admin-content space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <div class="text-xs text-slate-500 uppercase font-medium">ຍອດຂາຍລວມທັງໝົດ</div>
+                                <div id="stat-total-sales" class="text-2xl font-bold text-slate-800 mt-1">₭0</div>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 text-shopee-orange rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-wallet"></i></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <div class="text-xs text-slate-500 uppercase font-medium">ກຳໄລ (Estimated Profit)</div>
+                                <div id="stat-total-profit" class="text-2xl font-bold text-emerald-600 mt-1">₭0</div>
+                            </div>
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-chart-line"></i></div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                            <div>
+                                <div class="text-xs text-slate-500 uppercase font-medium">ຄຳສັ່ງຊື້ທັງໝົດ</div>
+                                <div id="stat-total-orders" class="text-2xl font-bold text-slate-800 mt-1">0</div>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl"><i class="fa-solid fa-cart-flatbed"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Logistics Breakdown Quick Badges -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-lg"><i class="fa-solid fa-truck-fast"></i></div>
+                            <div>
+                                <div class="text-xs text-slate-400 font-semibold uppercase">ອະນຸສິດ ຂົນສົ່ງ (Anousith)</div>
+                                <div id="stat-count-anousith" class="text-lg font-bold text-slate-800">0 ອໍເດີ້</div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg"><i class="fa-solid fa-boxes-packing"></i></div>
+                            <div>
+                                <div class="text-xs text-slate-400 font-semibold uppercase">ມິໄຊ ຂົນສົ່ງ (MiXay)</div>
+                                <div id="stat-count-mixay" class="text-lg font-bold text-slate-800">0 ອໍເດີ້</div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-plane-departure"></i></div>
+                            <div>
+                                <div class="text-xs text-slate-400 font-semibold uppercase">ຮອລ ຂົນສົ່ງ (HAL Express)</div>
+                                <div id="stat-count-hal" class="text-lg font-bold text-slate-800">0 ອໍເດີ້</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer History & Delivery Analytics Section -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">ປະຫວັດລູກຄ້າ & ສະຖິຕິການຝາກສົ່ງออนไลน์ (Customer Delivery Stats)</h3>
+                                <p class="text-xs text-slate-500">ລວມຂໍ້ມູນຂົນສົ່ງ</p>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                                    <tr>
+                                        <th class="p-3.5">ຊື່ລູກຄ້າ & ເບີໂທ</th>
+                                        <th class="p-3.5">ຈຳນວນຄຳສັ່ງຊື້</th>
+                                        <th class="p-3.5">ຍອດໃຊ້ຈ່າຍລວມ (₭)</th>
+                                        <th class="p-3.5">ຂົນສົ່ງທີ່ໃຊ້ປະຈຳ</th>
+                                        <th class="p-3.5">ປາຍທາງຫຼັກ (ສາຂາ/ແຂວງ)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-customer-stats-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Categories Management Tab -->
+                <div id="admin-tab-categories" class="admin-content hidden space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-slate-800">ຈັດການໝວດໝູ່ສິນຄ້າ</h3>
+                        <button onclick="openCategoryModal()" class="bg-shopee-orange text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition shadow">+ ເເພີ່ມໝວດໝູ່</button>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4">ຊື່ໝວດໝູ່</th>
+                                    <th class="p-4">Slug</th>
+                                    <th class="p-4">ຈຳນວນສິນຄ້າ</th>
+                                    <th class="p-4 text-right">ຈັດການ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-category-table-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Products Management Tab -->
+                <div id="admin-tab-products" class="admin-content hidden space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-slate-800">ຈັດການລາຍການສິນຄ້າ</h3>
+                        <button onclick="openProductModal()" class="bg-shopee-orange text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition shadow">+ ເພີ່ມສິນຄ້າໃໝ່</button>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4">ສິນຄ້າ</th>
+                                    <th class="p-4">ໝວດໝູ່</th>
+                                    <th class="p-4">ລາຄາຕົ້ນທຶນ (Cost)</th>
+                                    <th class="p-4">ລາຄາຂາຍ (Price)</th>
+                                    <th class="p-4">ກຳໄລ (Profit)</th>
+                                    <th class="p-4">ສະຕ໋ອກ</th>
+                                    <th class="p-4 text-right">ຈັດການ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-product-table-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. Orders Management Tab -->
+                <div id="admin-tab-orders" class="admin-content hidden space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">ຄຳສັ່ງຊື້ & ປຣິ້ນໃບບິນຂົນສົ່ງ (Shipping Label)</h3>
+                            <p class="text-xs text-slate-500">ກວດສອບອໍເດີ້ ແລະ ພິມໃບບິນຂົນສົ່ງຕາມແບບທີ່ທ່ານຕ້ອງການ</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-4">ລະຫັດຄຳສັ່ງຊື້</th>
+                                    <th class="p-4">ລູກຄ້າ & ຂົນສົ່ງ</th>
+                                    <th class="p-4">ຍອດລວມ (₭)</th>
+                                    <th class="p-4">ສະຖານະ</th>
+                                    <th class="p-4 text-right">ຈັດການ & ພິມໃບບິນ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-order-table-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5. BCEL OnePay QR Settings Tab -->
+                <div id="admin-tab-payment" class="admin-content hidden space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center space-x-2">
+                            <i class="fa-solid fa-qrcode text-bcel-blue"></i>
+                            <span>ຕັ້ງຄ່າລະບົບຊຳລະເງິນ BCEL OnePay QR</span>
+                        </h3>
+                        <p class="text-xs text-slate-500">ອັບໂຫຼດ QR Code ບັນຊີທະນາຄານການຄ້າຕ່າງປະເທດ Lao (BCEL One) ຂອງຮ້ານທ່ານ</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">ຊື່ບັນຊີທະນາຄານ</label>
+                                    <input type="text" id="setting-bank-name" value="KAI PEE HOUSE CO., LTD" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">ເລກບັນຊີ BCEL</label>
+                                    <input type="text" id="setting-bank-acc" value="010-12-00-123456-001" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">ອັບໂຫຼດຮູບ QR Code (BCEL OnePay)</label>
+                                    <input type="file" id="setting-qr-file" accept="image/*" onchange="handleQRUpload(event)" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-bcel-blue hover:file:bg-blue-100 cursor-pointer">
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                                <span class="text-xs font-semibold text-slate-500 mb-2">ຕົວຢ່າງ QR Code ປະຈຸບັນ</span>
+                                <img id="preview-bcel-qr" src="https://placehold.co/200x200/003366/white?text=BCEL+OnePay+QR" class="w-48 h-48 object-contain rounded-xl shadow bg-white p-2">
+                            </div>
+                        </div>
+
+                        <button onclick="savePaymentSettings()" class="bg-bcel-blue text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow hover:bg-blue-900 transition">
+                            ບັນທຶກຕັ້ງຄ່າ QR Code
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6. Store Settings Tab -->
+                <div id="admin-tab-settings" class="admin-content hidden space-y-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+                        <h3 class="text-lg font-bold text-slate-800">ຕັ້ງຄ່າຮ້ານຄ້າ & เบอร์โทรผู้ฝาก</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">ຊື່ຮ້ານຄ້າ (Store Name)</label>
+                                <input type="text" id="setting-store-name" value="KaipeeHouse" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">เบอร์โทรผู้ฝาก (Sender Phone)</label>
+                                <input type="text" id="setting-sender-phone" value="02028287808" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                            </div>
+                        </div>
+                        <button onclick="saveStoreSettings()" class="bg-shopee-orange text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow">ບັນທຶກການຕັ້ງຄ່າ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Shipping Label / Receipt Printing Modal with Multiple Sizes -->
+    <div id="shipping-label-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <h3 class="font-bold text-slate-800 text-sm">ພິມໃບບິນຂົນສົ່ງ (Shipping Label)</h3>
+                    <!-- Size Selector -->
+                    <select id="label-size-selector" onchange="changeLabelSize()" class="bg-white border border-slate-200 rounded-lg px-3 py-1 text-xs font-semibold focus:outline-none focus:border-shopee-orange">
+                        <option value="thermal-a6">ຂະໜາດ: Thermal A6 (100x150mm)</option>
+                        <option value="mini-80mm">ຂະໜາດ: ໃບເສັດ Mini 80mm</option>
+                        <option value="standard-a4">ຂະໜາດ: A4 มาตรฐาน</option>
+                    </select>
+                </div>
+                <button onclick="closeShippingLabelModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Printable Area container -->
+            <div class="p-6 overflow-y-auto flex-1 bg-slate-100 flex justify-center items-start">
+                <!-- Exact style matching reference image -->
+                <div id="printable-shipping-label" class="bg-white border-2 border-black w-full max-w-md shadow-lg text-slate-900 font-sans text-xs">
+                    <!-- Top Header -->
+                    <div class="border-b-2 border-black p-3 text-center bg-white">
+                        <div id="label-store-name" class="font-bold text-base text-slate-900">Kaipee shop</div>
+                        <div class="text-sm font-semibold mt-0.5">🐥 ຮ້ານໄກ່ປີ 🐥</div>
+                    </div>
+
+                    <!-- Sender Info -->
+                    <div class="border-b-2 border-black p-2.5 space-y-0.5">
+                        <div><strong class="font-bold">ຜູ້ຝາກ:</strong> <span id="label-sender-name">ຮ້ານໄກ່ປີ</span></div>
+                        <div><strong class="font-bold">ເບີໂທ:</strong> <span id="label-sender-phone" class="text-blue-700 underline font-semibold">02028287808</span></div>
+                    </div>
+
+                    <!-- Order ID & Items -->
+                    <div class="border-b-2 border-black p-2.5 space-y-1.5">
+                        <div class="font-bold text-sm" id="label-order-id">Order ທີ່: 3251</div>
+                        <div>
+                            <span class="font-bold">ລາຍການ:</span>
+                            <span id="label-items-text" class="leading-relaxed font-medium">VN x 22, ກໍສີ: ກ, ເບີ: 3 x 1, ຫນ້າໃບສີ: ດ, ເບີ: 36-37 x 1, kໜ້າ: MY, ເບີ: 38-39 x 1</span>
+                        </div>
+                    </div>
+
+                    <!-- Total COD Amount -->
+                    <div class="border-b-2 border-black p-3 bg-amber-50/50">
+                        <div class="text-sm font-extrabold text-slate-900 flex items-center justify-between">
+                            <span>ยอด COD:</span>
+                            <span id="label-total-price" class="text-shopee-orange text-base">₭2,155,000</span>
+                        </div>
+                    </div>
+
+                    <!-- Receiver & Destination Info -->
+                    <div class="border-b-2 border-black p-2.5 space-y-1">
+                        <div><strong class="font-bold">ຜູ້ຮັບ:</strong> <span id="label-customer-name">Vixay Phone</span></div>
+                        <div><strong class="font-bold">ທີ່ຢູ່:</strong> <span id="label-customer-address">ສາຂາ: ທົ່ງພານທອງ | ເມືອງ ໄຊເສດຖາ, ແຂວງ ນະຄອນຫຼວງວຽງຈັນ</span></div>
+                        <div><strong class="font-bold">ເບີໂທ:</strong> <span id="label-customer-phone">-</span></div>
+                    </div>
+
+                    <!-- Footer Thank you -->
+                    <div class="p-2 text-center font-bold text-xs bg-slate-50 tracking-wider">
+                        ຂອບໃຈທີ່ອຸດໜູນ
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+                <span class="text-xs text-slate-500">ເລືອກຂະໜາດແລ້ວກົດປຣິ້ນໃບບິນອອກເຄື່ອງພິມຄວາມຮ້ອນໄດ້ເລີຍ</span>
+                <div class="flex space-x-2">
+                    <button onclick="closeShippingLabelModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 rounded-xl text-xs font-semibold transition">ປິດ</button>
+                    <button onclick="window.print()" class="px-6 py-2.5 bg-shopee-orange text-white rounded-xl text-xs font-semibold shadow hover:bg-shopee-dark transition flex items-center space-x-2">
+                        <i class="fa-solid fa-print"></i>
+                        <span>ພິມໃບບິນຂົນສົ່ງ (Print Label)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="font-bold text-slate-800">ກະຕ່າສິນຄ້າຂອງທ່ານ</h3>
+                <button onclick="closeCartModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="cart-items-container" class="p-4 flex-1 overflow-y-auto space-y-4 divide-y divide-slate-100"></div>
+            <div class="p-4 bg-slate-50 border-t border-slate-100 space-y-3">
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-slate-500">ລວມທັງໝົດ:</span>
+                    <span id="cart-total-price" class="font-bold text-lg text-shopee-orange">₭0</span>
+                </div>
+                <button onclick="proceedToCheckout()" class="w-full bg-shopee-orange hover:bg-shopee-dark text-white font-bold py-3 rounded-xl shadow transition">
+                    ดำเนินการຊຳລະເງິນ (Proceed to Payment)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BCEL OnePay Checkout Modal with Branch, Lao Address & Logistics -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b pb-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-bcel-blue text-white flex items-center justify-center font-bold text-xs">BCEL</div>
+                    <h3 class="font-bold text-slate-800">ຊຳລະຜ່ານ BCEL OnePay QR & ຈັດສົ່ງ</h3>
+                </div>
+                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="text-center space-y-2">
+                <p class="text-xs text-slate-500">ສະແກນ QR Code ນี้ຜ່ານແອັບພລິເຄຊັນ <strong>BCEL One</strong> ຂອງທ່ານ</p>
+                <div class="p-2 bg-slate-50 rounded-2xl border inline-block">
+                    <img id="modal-bcel-qr" src="" class="w-36 h-36 object-contain rounded-xl mx-auto">
+                </div>
+                <div>
+                    <div class="text-xs text-slate-400">ຍອດຊຳລະທັງໝົດ / Total Amount</div>
+                    <div id="modal-checkout-total" class="text-xl font-extrabold text-shopee-orange">₭0</div>
+                </div>
+            </div>
+
+            <form onsubmit="submitPaymentOrder(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ຊື່-ນາມສະກຸນ ຜູ້ຮັບ</label>
+                    <input type="text" id="customer-name-input" required placeholder="ຕື່ມຊື່ຂອງທ່ານ..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ເບີໂທລະສັບຜູ້ຮັບ (Receiver Phone)</label>
+                    <input type="text" id="customer-phone-input" required placeholder="ຕົວຢ່າງ: 020XXXXXXXX" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ສາຂາ (Branch / จุดรับสินค้า)</label>
+                    <input type="text" id="customer-branch-input" required placeholder="ລະບຸສາຂາຂົນສົ່ງປາຍທາງ..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ເມືອງ (District)</label>
+                        <input type="text" id="customer-city-input" required placeholder="ຕົວຢ່າງ: ໄຊເສດຖາ" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ແຂວງ (Province)</label>
+                        <select id="customer-province-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm">
+                            <option value="ນະຄອນຫຼວງວຽງຈັນ">ນະຄອນຫຼວງວຽງຈັນ</option>
+                            <option value="ຫຼວງພະບາງ">ຫຼວງພະບາງ</option>
+                            <option value="ອຸດົມໄຊ">ອຸດົມໄຊ</option>
+                            <option value="ຈຳປາສັກ">ຈຳປາສັກ</option>
+                            <option value="ສະຫວັນນະເຂດ">ສະຫວັນນະເຂດ</option>
+                            <option value="ວຽງຈັນ">ວຽງຈັນ</option>
+                            <option value="ຄຳມ່ວນ">ຄຳມ່ວນ</option>
+                            <option value="ບໍລິຄຳໄຊ">ບໍລິຄຳໄຊ</option>
+                            <option value="ຊຽງຂວາງ">ຊຽງຂວາງ</option>
+                            <option value="ຫົວພັນ">ຫົວພັນ</option>
+                            <option value="ຜົ້ງສາລີ">ຜົ້ງສາລີ</option>
+                            <option value="ຫຼວງນໍ້າທາ">ຫຼວງນໍ້າທາ</option>
+                            <option value="ບໍ່ແກ້ວ">ບໍ່ແກ້ວ</option>
+                            <option value="ໄຊຍະບູລີ">ໄຊຍະບູລີ</option>
+                            <option value="ສາລະວັນ">ສາລະວັນ</option>
+                            <option value="ເຊກອງ">ເຊກອງ</option>
+                            <option value="ອັດຕະປື">ອັດຕະປື</option>
+                            <option value="ໄຊສົມບູນ">ໄຊສົມບູນ</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ບໍລິສັດຂົນສົ່ງໃນລາວ (Logistics Provider)</label>
+                    <select id="customer-logistics-select" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm">
+                        <option value="Anousith Express">ອະນຸສິດ ຂົນສົ່ງ (Anousith Express)</option>
+                        <option value="MiXay Express">ມິໄຊ ຂົນສົ່ງ (MiXay Express)</option>
+                        <option value="HAL Express">ຮອລ ຂົນສົ່ງ (HAL Logistics)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ອັບໂຫຼດສະລິບໂອນເງິນ (Payment Slip)</label>
+                    <input type="file" id="customer-slip-file" accept="image/*" required class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-orange-50 file:text-shopee-orange hover:file:bg-orange-100 cursor-pointer">
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow transition text-sm">
+                    ຢືນຢັນການຊຳລະເງິນ & ສົ່ງຄຳສັ່ງຊື້
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="category-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden p-6 space-y-4">
+            <h3 class="font-bold text-slate-800 text-lg">ເພີ່ມໝວດໝູ່</h3>
+            <form id="category-form" onsubmit="saveCategory(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ຊື່ໝວດໝູ່</label>
+                    <input type="text" id="category-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Slug</label>
+                    <input type="text" id="category-slug" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeCategoryModal()" class="px-4 py-2 bg-slate-100 rounded-xl text-sm">ຍົກເລີກ</button>
+                    <button type="submit" class="px-5 py-2 bg-shopee-orange text-white rounded-xl text-sm shadow">ບັນທຶກ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="font-bold text-slate-800 text-lg">ເພີ່ມສິນຄ້າ</h3>
+            <form id="product-form" onsubmit="saveProduct(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ຊື່ສິນຄ້າ</label>
+                    <input type="text" id="product-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ໝວດໝູ່</label>
+                    <select id="product-category-select" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm"></select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ລາຄາຕົ້ນທຶນ (Cost Price ₭)</label>
+                        <input type="number" id="product-cost" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ລາຄາຂາຍ (Selling Price ₭)</label>
+                        <input type="number" id="product-price" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" placeholder="0">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ສຕັອກ</label>
+                        <input type="number" id="product-stock" required min="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm" placeholder="0">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ອັບໂຫຼດຮູບພາບຈາກຄลังรูปภาพ (Gallery / File)</label>
+                    <input type="file" id="product-image-file" accept="image/*" required onchange="handleProductImageUpload(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-orange-50 file:text-shopee-orange hover:file:bg-orange-100 cursor-pointer">
+                    <div class="mt-2 flex items-center space-x-3">
+                        <img id="product-img-preview" src="https://placehold.co/100x100/slate/white?text=Preview" class="w-16 h-16 object-cover rounded-xl border">
+                        <span class="text-xs text-slate-400">ຮູບພາບທີ່ເລືອກຈະສະແດງຢູ່ບ່ອນນີ້</span>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 bg-slate-100 rounded-xl text-sm">ຍົກເລີກ</button>
+                    <button type="submit" class="px-5 py-2 bg-shopee-orange text-white rounded-xl text-sm shadow">ບັນທຶກ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <script>
+        let currentLang = 'lo';
+        let temporaryProductImageBase64 = '';
+        let activeDetailedOrderId = null;
+
+        let storeSettings = JSON.parse(localStorage.getItem('kaipee_settings')) || { name: 'Kaipee shop', senderPhone: '02028287808' };
+        let paymentSettings = JSON.parse(localStorage.getItem('kaipee_payment')) || {
+            bankName: 'KAI PEE HOUSE CO., LTD',
+            bankAcc: '010-12-00-123456-001',
+            qrImage: 'https://placehold.co/200x200/003366/white?text=BCEL+OnePay+QR'
+        };
+
+        let categories = JSON.parse(localStorage.getItem('kaipee_categories')) || [
+            { id: 'cat-1', name: 'แฟชั่นຍິງ / ຍິງ', slug: 'women-fashion', icon: 'fa-solid fa-person-dress' },
+            { id: 'cat-2', name: 'ມືຖືແລະອຸປະກອນ', slug: 'mobiles-gadgets', icon: 'fa-solid fa-mobile-screen' },
+            { id: 'cat-3', name: 'ເຄື່ອງໃຊ້ໄຟຟ້າ', slug: 'home-appliances', icon: 'fa-solid fa-tv' }
+        ];
+
+        let products = JSON.parse(localStorage.getItem('kaipee_products')) || [
+            { id: 'p-1', name: 'ເກີບແຟຊັ່ນຍອດນິຍົມ', category: 'cat-1', cost: 100000, price: 150000, stock: 45, sales: 120, image: 'https://placehold.co/400x400/orange/white?text=Shoes' },
+            { id: 'p-2', name: 'ສະມາທິໂຟນ 5G', category: 'cat-2', cost: 2800000, price: 3500000, stock: 15, sales: 85, image: 'https://placehold.co/400x400/indigo/white?text=Phone' }
+        ];
+
+        let orders = JSON.parse(localStorage.getItem('kaipee_orders')) || [
+            { 
+                id: '3251', 
+                customer: 'Vixay Phone', 
+                phone: '02099887766',
+                branch: 'ທົ່ງພານທອງ',
+                city: 'ໄຊເສດຖາ',
+                province: 'ນະຄອນຫຼວງວຽງຈັນ',
+                address: 'ສາຂາ: ທົ່ງພານທອງ | ເມືອງ ໄຊເສດຖາ, ແຂວງ ນະຄອນຫຼວງວຽງຈັນ', 
+                logistics: 'Anousith Express', 
+                total: 2155000, 
+                totalProfit: 450000, 
+                status: 'Pending Verification', 
+                items: [{ id: 'p-1', name: 'VN', price: 150000, cost: 100000, qty: 22 }], 
+                slip: 'https://placehold.co/200x200/slate/white?text=Slip' 
+            }
+        ];
+
+        let cart = [];
+        let selectedCategoryFilter = 'all';
+        let currentMode = 'store';
+        let activeAdminTab = 'dashboard';
+
+        function saveAllData() {
+            localStorage.setItem('kaipee_settings', JSON.stringify(storeSettings));
+            localStorage.setItem('kaipee_payment', JSON.stringify(paymentSettings));
+            localStorage.setItem('kaipee_categories', JSON.stringify(categories));
+            localStorage.setItem('kaipee_products', JSON.stringify(products));
+            localStorage.setItem('kaipee_orders', JSON.stringify(orders));
+        }
+
+        window.onload = function() {
+            document.getElementById('setting-store-name').value = storeSettings.name || 'Kaipee shop';
+            document.getElementById('setting-sender-phone').value = storeSettings.senderPhone || '02028287808';
+            document.getElementById('setting-bank-name').value = paymentSettings.bankName;
+            document.getElementById('setting-bank-acc').value = paymentSettings.bankAcc;
+            document.getElementById('preview-bcel-qr').src = paymentSettings.qrImage;
+            document.getElementById('store-brand-name').innerText = storeSettings.name || 'KaipeeHouse';
+            
+            document.getElementById('store-view').classList.remove('hidden');
+            document.getElementById('admin-view').classList.add('hidden');
+            
+            refreshUI();
+        };
+
+        function refreshUI() {
+            renderStoreCategories();
+            renderProducts();
+            renderAdminDashboard();
+            renderAdminCategories();
+            renderAdminProducts();
+            renderAdminOrders();
+            populateProductCategoryDropdown();
+            document.getElementById('store-brand-name').innerText = storeSettings.name || 'KaipeeHouse';
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            const toggleText = document.getElementById('view-toggle-text');
+            toggleText.innerText = currentMode === 'admin' ? (lang === 'en' ? 'Switch to Store' : 'ສັບປ່ຽນໄປໜ້າຮ້ານຄ້າ') : (lang === 'en' ? 'Switch to Admin' : 'ສັບປ່ຽນໄປຫຼັງບ້ານ (Admin)');
+        }
+
+        function toggleView() {
+            currentMode = currentMode === 'store' ? 'admin' : 'store';
+            document.getElementById('store-view').classList.toggle('hidden');
+            document.getElementById('admin-view').classList.toggle('hidden');
+            const toggleText = document.getElementById('view-toggle-text');
+            toggleText.innerText = currentMode === 'admin' ? 'ສັບປ່ຽນໄປໜ້າຮ້ານຄ້າ (Store)' : 'ສັບປ່ຽນໄປຫຼັງບ້ານ (Admin)';
+            if (currentMode === 'admin') switchAdminTab(activeAdminTab);
+        }
+
+        function switchMode(mode) {
+            if (currentMode !== mode) toggleView();
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'p-3 bg-emerald-600 text-white rounded-xl shadow-lg text-sm font-medium transition transform translate-y-2 opacity-0 flex items-center space-x-2';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 50);
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function renderStoreCategories() {
+            const container = document.getElementById('store-category-list');
+            let html = `
+                <div onclick="filterByCategory('all')" class="cursor-pointer bg-white p-3.5 rounded-2xl shadow-sm hover:shadow transition flex flex-col items-center justify-center text-center space-y-2 border ${selectedCategoryFilter === 'all' ? 'border-shopee-orange bg-orange-50/50' : 'border-slate-100'}">
+                    <div class="w-10 h-10 rounded-full bg-orange-100 text-shopee-orange flex items-center justify-center text-lg"><i class="fa-solid fa-border-all"></i></div>
+                    <span class="text-xs font-semibold text-slate-700">ທັງໝົດ</span>
+                </div>
+            `;
+            categories.forEach(cat => {
+                html += `
+                    <div onclick="filterByCategory('${cat.id}')" class="cursor-pointer bg-white p-3.5 rounded-2xl shadow-sm hover:shadow transition flex flex-col items-center justify-center text-center space-y-2 border ${selectedCategoryFilter === cat.id ? 'border-shopee-orange bg-orange-50/50' : 'border-slate-100'}">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-lg"><i class="${cat.icon || 'fa-solid fa-folder'}"></i></div>
+                        <span class="text-xs font-semibold text-slate-700 truncate w-full">${cat.name}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function filterByCategory(catId) {
+            selectedCategoryFilter = catId;
+            renderStoreCategories();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+            let filtered = products.filter(p => (selectedCategoryFilter === 'all' || p.category === selectedCategoryFilter) && p.name.toLowerCase().includes(searchQuery));
+            document.getElementById('product-count').innerText = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400">ບໍ່ພົບສິນຄ້າ / No products found</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition overflow-hidden flex flex-col border border-slate-100">
+                    <div class="relative pb-[100%] bg-slate-100">
+                        <img src="${p.image}" class="absolute inset-0 w-full h-full object-cover" onerror="this.src='https://placehold.co/400x400/slate/white?text=Product'">
+                    </div>
+                    <div class="p-3.5 flex-1 flex flex-col justify-between space-y-2">
+                        <div>
+                            <h4 class="text-xs font-medium text-slate-800 line-clamp-2">${p.name}</h4>
+                            <span class="text-[10px] text-slate-400">Stock: ${p.stock}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-shopee-orange font-bold text-sm">₭${Number(p.price).toLocaleString()}</span>
+                            <button onclick="addToCart('${p.id}')" ${p.stock <= 0 ? 'disabled class="bg-slate-200 text-slate-400 p-2 rounded-xl text-xs cursor-not-allowed"' : 'class="bg-shopee-light text-shopee-orange hover:bg-shopee-orange hover:text-white p-2 rounded-xl transition text-xs"'}>
+                                <i class="fa-solid fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function sortProducts() {
+            const sortBy = document.getElementById('sort-select').value;
+            if (sortBy === 'price-asc') products.sort((a,b) => a.price - b.price);
+            else if (sortBy === 'price-desc') products.sort((a,b) => b.price - a.price);
+            else if (sortBy === 'sales') products.sort((a,b) => b.sales - a.sales);
+            renderProducts();
+        }
+
+        function handleSearch() { renderProducts(); }
+
+        function addToCart(id) {
+            const p = products.find(prod => prod.id === id);
+            if (!p || p.stock <= 0) return;
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                if (existing.qty >= p.stock) {
+                    showToast('ສິນຄ້າໃນສຕັອກບໍ່ພຽງພໍ');
+                    return;
+                }
+                existing.qty += 1;
+            } else {
+                cart.push({ ...p, qty: 1 });
+            }
+            const totalQty = cart.reduce((sum, i) => sum + i.qty, 0);
+            document.getElementById('cart-badge').innerText = totalQty;
+            document.getElementById('cart-badge-mob').innerText = totalQty;
+            showToast('ເພີ່ມລົງກະຕ່າແລ້ວ');
+        }
+
+        function openCartModal() {
+            const container = document.getElementById('cart-items-container');
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="py-8 text-center text-slate-400 text-sm">ກະຕ່າຫວ່າງເປົ່າ / Cart is empty</div>`;
+                document.getElementById('cart-total-price').innerText = '₭0';
+            } else {
+                let total = 0;
+                container.innerHTML = cart.map((item, idx) => {
+                    total += item.price * item.qty;
+                    return `
+                        <div class="py-3 flex items-center justify-between space-x-3">
+                            <img src="${item.image}" class="w-12 h-12 rounded-lg object-cover">
+                            <div class="flex-1"><h5 class="text-xs font-semibold">${item.name}</h5><span class="text-xs text-shopee-orange font-bold">₭${item.price.toLocaleString()} x ${item.qty}</span></div>
+                            <button onclick="cart[idx].qty++; openCartModal();" class="w-6 h-6 bg-slate-100 rounded text-xs">+</button>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('cart-total-price').innerText = `₭${total.toLocaleString()}`;
+            }
+            document.getElementById('cart-modal').classList.remove('hidden');
+        }
+
+        function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); }
+
+        function proceedToCheckout() {
+            if (cart.length === 0) return;
+            let total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+            document.getElementById('modal-checkout-total').innerText = `₭${total.toLocaleString()}`;
+            document.getElementById('modal-bcel-qr').src = paymentSettings.qrImage;
+            
+            closeCartModal();
+            document.getElementById('checkout-modal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() { document.getElementById('checkout-modal').classList.add('hidden'); }
+
+        function submitPaymentOrder(e) {
+            e.preventDefault();
+            const customerName = document.getElementById('customer-name-input').value;
+            const customerPhone = document.getElementById('customer-phone-input').value;
+            const customerBranch = document.getElementById('customer-branch-input').value;
+            const customerCity = document.getElementById('customer-city-input').value;
+            const customerProvince = document.getElementById('customer-province-select').value;
+            const logisticsProvider = document.getElementById('customer-logistics-select').value;
+            const slipFile = document.getElementById('customer-slip-file').files[0];
+            const slipUrl = slipFile ? URL.createObjectURL(slipFile) : 'https://placehold.co/200x200/slate/white?text=Slip';
+
+            let orderTotal = 0;
+            let orderProfit = 0;
+            let orderItemsDetail = [];
+
+            cart.forEach(cartItem => {
+                const prod = products.find(p => p.id === cartItem.id);
+                if (prod) {
+                    prod.stock = Math.max(0, prod.stock - cartItem.qty);
+                    prod.sales = (prod.sales || 0) + cartItem.qty;
+                    orderTotal += prod.price * cartItem.qty;
+                    const itemCost = prod.cost || 0;
+                    orderProfit += (prod.price - itemCost) * cartItem.qty;
+                    orderItemsDetail.push({
+                        id: prod.id,
+                        name: prod.name,
+                        price: prod.price,
+                        cost: itemCost,
+                        qty: cartItem.qty
+                    });
+                }
+            });
+
+            const newOrder = {
+                id: Math.floor(1000 + Math.random() * 9000).toString(),
+                customer: customerName,
+                phone: customerPhone,
+                branch: customerBranch,
+                city: customerCity,
+                province: customerProvince,
+                address: `ສາຂາ: ${customerBranch} | ເມືອງ ${customerCity}, ແຂວງ ${customerProvince}`,
+                logistics: logisticsProvider,
+                total: orderTotal,
+                totalProfit: orderProfit,
+                status: 'Pending Verification',
+                items: orderItemsDetail,
+                slip: slipUrl
+            };
+
+            orders.unshift(newOrder);
+            cart = [];
+            document.getElementById('cart-badge').innerText = 0;
+            document.getElementById('cart-badge-mob').innerText = 0;
+            saveAllData();
+            refreshUI();
+            closeCheckoutModal();
+            showToast('ສັ່ງຊື້ສຳເລັດ! ກະລຸນາລໍຖ້າແອດມິນກວດສອບສະລິບ');
+        }
+
+        function switchAdminTab(tabName) {
+            activeAdminTab = tabName;
+            document.querySelectorAll('.admin-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.admin-nav-btn').forEach(btn => btn.classList.remove('bg-orange-50', 'text-shopee-orange', 'font-bold'));
+            document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`admin-nav-${tabName}`).classList.add('bg-orange-50', 'text-shopee-orange', 'font-bold');
+        }
+
+        function renderAdminDashboard() {
+            document.getElementById('stat-total-sales').innerText = `₭${orders.reduce((sum, o) => sum + o.total, 0).toLocaleString()}`;
+            document.getElementById('stat-total-profit').innerText = `₭${orders.reduce((sum, o) => sum + (o.totalProfit || 0), 0).toLocaleString()}`;
+            document.getElementById('stat-total-orders').innerText = orders.length;
+
+            // Count per logistics
+            let countAnousith = 0;
+            let countMixay = 0;
+            let countHal = 0;
+
+            const customerMap = {};
+            orders.forEach(o => {
+                const log = o.logistics || '';
+                if (log.includes('Anousith')) countAnousith++;
+                else if (log.includes('MiXay')) countMixay++;
+                else if (log.includes('HAL')) countHal++;
+
+                const key = (o.customer + '_' + (o.phone || '')).trim();
+                if (!customerMap[key]) {
+                    customerMap[key] = {
+                        name: o.customer,
+                        phone: o.phone || '-',
+                        count: 0,
+                        totalSpent: 0,
+                        logistics: {},
+                        destinations: {}
+                    };
+                }
+                customerMap[key].count += 1;
+                customerMap[key].totalSpent += o.total;
+                
+                customerMap[key].logistics[log] = (customerMap[key].logistics[log] || 0) + 1;
+
+                const dest = `${o.branch || ''} (${o.province || ''})`;
+                customerMap[key].destinations[dest] = (customerMap[key].destinations[dest] || 0) + 1;
+            });
+
+            document.getElementById('stat-count-anousith').innerText = `${countAnousith} ອໍເດີ້`;
+            document.getElementById('stat-count-mixay').innerText = `${countMixay} ອໍເດີ້`;
+            document.getElementById('stat-count-hal').innerText = `${countHal} ອໍເດີ້`;
+
+            const statsBody = document.getElementById('admin-customer-stats-body');
+            const customerEntries = Object.values(customerMap);
+
+            if (customerEntries.length === 0) {
+                statsBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">ຍັງບໍ່ມີປະຫວັດລູກຄ້າ</td></tr>`;
+                return;
+            }
+
+            statsBody.innerHTML = customerEntries.map(c => {
+                let favLogistics = Object.keys(c.logistics).reduce((a, b) => c.logistics[a] > c.logistics[b] ? a : b, '-');
+                let badgeIcon = 'fa-solid fa-truck';
+                let badgeColor = 'bg-orange-50 text-shopee-orange';
+                if (favLogistics.includes('Anousith')) {
+                    badgeIcon = 'fa-solid fa-truck-fast';
+                    badgeColor = 'bg-red-50 text-red-600';
+                } else if (favLogistics.includes('MiXay')) {
+                    badgeIcon = 'fa-solid fa-boxes-packing';
+                    badgeColor = 'bg-amber-50 text-amber-600';
+                } else if (favLogistics.includes('HAL')) {
+                    badgeIcon = 'fa-solid fa-plane-departure';
+                    badgeColor = 'bg-blue-50 text-blue-600';
+                }
+
+                let favDest = Object.keys(c.destinations).reduce((a, b) => c.destinations[a] > c.destinations[b] ? a : b, '-');
+                return `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50/50">
+                        <td class="p-3.5">
+                            <div class="font-bold text-slate-800">${c.name}</div>
+                            <div class="text-xs text-blue-600">${c.phone}</div>
+                        </td>
+                        <td class="p-3.5 font-semibold text-slate-700">${c.count} ອໍເດີ້</td>
+                        <td class="p-3.5 font-bold text-shopee-orange">₭${c.totalSpent.toLocaleString()}</td>
+                        <td class="p-3.5"><span class="px-3 py-1 ${badgeColor} rounded-full text-xs font-bold inline-flex items-center space-x-1.5"><i class="${badgeIcon}"></i><span>${favLogistics}</span></span></td>
+                        <td class="p-3.5 text-xs text-slate-600">${favDest}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderAdminCategories() {
+            document.getElementById('admin-category-table-body').innerHTML = categories.map(c => {
+                const count = products.filter(p => p.category === c.id).length;
+                return `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-4 font-bold flex items-center space-x-2"><i class="${c.icon || 'fa-solid fa-folder'} text-slate-400"></i><span>${c.name}</span></td>
+                        <td class="p-4"><code>${c.slug}</code></td>
+                        <td class="p-4">${count} ລາຍການ</td>
+                        <td class="p-4 text-right"><button onclick="deleteCategory('${c.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderAdminProducts() {
+            document.getElementById('admin-product-table-body').innerHTML = products.map(p => {
+                const cat = categories.find(c => c.id === p.category);
+                const cost = p.cost || 0;
+                const profit = p.price - cost;
+                return `
+                    <tr class="border-b border-slate-100">
+                        <td class="p-4 flex items-center space-x-3"><img src="${p.image}" class="w-10 h-10 rounded-lg object-cover"><div><div class="font-bold">${p.name}</div><div class="text-xs text-slate-400">Sold: ${p.sales || 0}</div></div></td>
+                        <td class="p-4">${cat ? cat.name : '-'}</td>
+                        <td class="p-4 text-slate-500">₭${Number(cost).toLocaleString()}</td>
+                        <td class="p-4 font-semibold text-shopee-orange">₭${Number(p.price).toLocaleString()}</td>
+                        <td class="p-4 font-bold text-emerald-600">₭${Number(profit).toLocaleString()}</td>
+                        <td class="p-4"><span class="px-2.5 py-1 bg-slate-100 rounded-xl text-xs font-bold ${p.stock <= 5 ? 'text-rose-600 bg-rose-50' : 'text-emerald-600'}">${p.stock} ຊິ້ນ</span></td>
+                        <td class="p-4 text-right"><button onclick="deleteProduct('${p.id}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function renderAdminOrders() {
+            document.getElementById('admin-order-table-body').innerHTML = orders.map(o => `
+                <tr class="border-b border-slate-100 hover:bg-slate-50/50">
+                    <td class="p-4 font-bold text-slate-800">${o.id}</td>
+                    <td class="p-4">
+                        <div class="font-bold">${o.customer}</div>
+                        <div class="text-xs text-slate-500"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i>${o.address || '-'}</div>
+                        <div class="text-xs text-blue-600 font-semibold mt-0.5"><i class="fa-solid fa-truck-fast mr-1"></i>${o.logistics || '-'}</div>
+                    </td>
+                    <td class="p-4 font-bold text-shopee-orange">₭${Number(o.total).toLocaleString()}</td>
+                    <td class="p-4"><span class="px-2.5 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-full">${o.status}</span></td>
+                    <td class="p-4 text-right space-x-2">
+                        <button onclick="openShippingLabelModal('${o.id}')" class="px-3.5 py-2 bg-orange-50 text-shopee-orange hover:bg-shopee-orange hover:text-white rounded-xl text-xs font-bold transition shadow-sm">
+                            <i class="fa-solid fa-print mr-1"></i>ພິມໃບບິນ
+                        </button>
+                        <button onclick="deleteOrder('${o.id}')" class="text-rose-600 hover:text-rose-800 p-1.5"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openShippingLabelModal(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+            activeDetailedOrderId = orderId;
+
+            document.getElementById('label-store-name').innerText = storeSettings.name || 'Kaipee shop';
+            document.getElementById('label-sender-name').innerText = storeSettings.name || 'Kaipee shop';
+            document.getElementById('label-sender-phone').innerText = storeSettings.senderPhone || '02028287808';
+            document.getElementById('label-order-id').innerText = `Order ທີ່: ${order.id}`;
+
+            let itemsStr = '';
+            if (Array.isArray(order.items)) {
+                itemsStr = order.items.map(i => `${i.name} x ${i.qty}`).join(', ');
+            } else {
+                itemsStr = order.items;
+            }
+            document.getElementById('label-items-text').innerText = itemsStr;
+            document.getElementById('label-total-price').innerText = `₭${Number(order.total).toLocaleString()}`;
+            document.getElementById('label-customer-name').innerText = order.customer;
+            document.getElementById('label-customer-address').innerText = order.address || '-';
+            document.getElementById('label-customer-phone').innerText = order.phone || '-';
+
+            document.getElementById('shipping-label-modal').classList.remove('hidden');
+        }
+
+        function closeShippingLabelModal() {
+            document.getElementById('shipping-label-modal').classList.add('hidden');
+        }
+
+        function changeLabelSize() {
+            const size = document.getElementById('label-size-selector').value;
+            const labelCard = document.getElementById('printable-shipping-label');
+            if (size === 'thermal-a6') {
+                labelCard.style.maxWidth = '28rem';
+                labelCard.style.fontSize = '12px';
+            } else if (size === 'mini-80mm') {
+                labelCard.style.maxWidth = '20rem';
+                labelCard.style.fontSize = '11px';
+            } else if (size === 'standard-a4') {
+                labelCard.style.maxWidth = '36rem';
+                labelCard.style.fontSize = '14px';
+            }
+        }
+
+        function handleQRUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    paymentSettings.qrImage = event.target.result;
+                    document.getElementById('preview-bcel-qr').src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleProductImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    temporaryProductImageBase64 = event.target.result;
+                    document.getElementById('product-img-preview').src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function savePaymentSettings() {
+            paymentSettings.bankName = document.getElementById('setting-bank-name').value;
+            paymentSettings.bankAcc = document.getElementById('setting-bank-acc').value;
+            saveAllData();
+            showToast('ບັນທຶກການຕັ້ງຄ່າ BCEL OnePay ສຳເລັດ!');
+        }
+
+        function openCategoryModal() { document.getElementById('category-modal').classList.remove('hidden'); }
+        function closeCategoryModal() { document.getElementById('category-modal').classList.add('hidden'); }
+        
+        function saveCategory(e) {
+            e.preventDefault();
+            const name = document.getElementById('category-name').value;
+            const slug = document.getElementById('category-slug').value;
+            const newCat = { id: 'cat-' + Date.now(), name, slug, icon: 'fa-solid fa-tag' };
+            categories.push(newCat);
+            saveAllData();
+            refreshUI();
+            closeCategoryModal();
+            showToast('ເພີ່ມໝວດໝູ່ສຳເລັດ!');
+        }
+
+        function openProductModal() {
+            temporaryProductImageBase64 = '';
+            document.getElementById('product-form').reset();
+            document.getElementById('product-img-preview').src = 'https://placehold.co/100x100/slate/white?text=Preview';
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+        
+        function saveProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('product-name').value;
+            const category = document.getElementById('product-category-select').value;
+            const cost = Number(document.getElementById('product-cost').value);
+            const price = Number(document.getElementById('product-price').value);
+            const stock = Number(document.getElementById('product-stock').value);
+            const image = temporaryProductImageBase64 || 'https://placehold.co/400x400/slate/white?text=Product';
+
+            const newProd = { id: 'p-' + Date.now(), name, category, cost, price, stock, sales: 0, image };
+            products.unshift(newProd);
+            saveAllData();
+            refreshUI();
+            closeProductModal();
+            showToast('ເພີ່ມສິນຄ້າສຳເລັດ!');
+        }
+
+        function deleteProduct(id) {
+            products = products.filter(p => p.id !== id);
+            saveAllData();
+            refreshUI();
+            showToast('ລຶບສິນຄ້າສຳເລັດ');
+        }
+
+        function deleteCategory(id) {
+            categories = categories.filter(c => c.id !== id);
+            saveAllData();
+            refreshUI();
+            showToast('ລຶບໝວດໝູ່ສຳເລັດ');
+        }
+
+        function deleteOrder(id) {
+            orders = orders.filter(o => o.id !== id);
+            saveAllData();
+            refreshUI();
+            showToast('ລຶບຄຳສັ່ງຊື້ສຳເລັດ');
+        }
+
+        function saveStoreSettings() {
+            storeSettings.name = document.getElementById('setting-store-name').value;
+            storeSettings.senderPhone = document.getElementById('setting-sender-phone').value;
+            saveAllData();
+            refreshUI();
+            showToast('ບັນທຶກຕັ້ງຄ່າຮ້ານຄ້າສຳເລັດ!');
+        }
+    </script>
+</body>
+</html>
