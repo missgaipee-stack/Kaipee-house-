@@ -33,7 +33,6 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Print sizing styles */
         @media print {
             body * { visibility: hidden; }
             #printable-shipping-label, #printable-shipping-label * { visibility: visible; }
@@ -50,8 +49,8 @@
     <header class="bg-gradient-to-r from-shopee-orange to-shopee-dark text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <button onclick="toggleView()" class="bg-white/25 hover:bg-white/35 px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center space-x-2 shadow-sm">
-                    <i class="fa-solid fa-rotate"></i>
+                <button onclick="requestAdminAccess()" class="bg-white/25 hover:bg-white/35 px-3.5 py-2 rounded-xl text-xs md:text-sm font-bold transition flex items-center space-x-2 shadow-sm">
+                    <i class="fa-solid fa-shield-halved"></i>
                     <span id="view-toggle-text">ສະຫຼັບປ່ຽນໄປຫຼັງບ້ານ (Admin)</span>
                 </button>
                 <div class="flex items-center space-x-2 cursor-pointer" onclick="switchMode('store')">
@@ -165,11 +164,17 @@
                     <i class="fa-solid fa-gear w-5"></i>
                     <span>ຕັ້ງຄ່າຮ້ານຄ້າ (Settings)</span>
                 </button>
+                <div class="pt-2 border-t border-slate-100">
+                    <button onclick="lockAdminSession()" class="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-semibold text-rose-600 hover:bg-rose-50 transition">
+                        <i class="fa-solid fa-lock w-5"></i>
+                        <span>ລັອກອອກຈາກຫຼັງບ້ານ (Lock)</span>
+                    </button>
+                </div>
             </aside>
 
             <!-- Admin Tab Contents -->
             <div class="flex-1 space-y-6">
-                <!-- 1. Dashboard Tab with Customer History & Carrier Icons -->
+                <!-- 1. Dashboard Tab -->
                 <div id="admin-tab-dashboard" class="admin-content space-y-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
@@ -281,7 +286,7 @@
                                     <th class="p-4">ລາຄາຕົ້ນທຶນ (Cost)</th>
                                     <th class="p-4">ລາຄາຂາຍ (Price)</th>
                                     <th class="p-4">ກຳໄລ (Profit)</th>
-                                    <th class="p-4">ສະຕ໋ອກ</th>
+                                    <th class="p-4">ສຕ໋ອກ</th>
                                     <th class="p-4 text-right">ຈັດການ</th>
                                 </tr>
                             </thead>
@@ -350,7 +355,7 @@
                     </div>
                 </div>
 
-                <!-- 6. Store Settings Tab -->
+                <!-- 6. Store Settings & Passcode Security Tab -->
                 <div id="admin-tab-settings" class="admin-content hidden space-y-6">
                     <div class="bg-white rounded-2xl p-6 shadow-sm space-y-4">
                         <h3 class="text-lg font-bold text-slate-800">ຕັ້ງຄ່າຮ້ານຄ້າ & เบอร์โทรผู้ฝาก</h3>
@@ -366,10 +371,57 @@
                         </div>
                         <button onclick="saveStoreSettings()" class="bg-shopee-orange text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow">ບັນທຶກການຕັ້ງຄ່າ</button>
                     </div>
+
+                    <!-- Security Passcode Settings -->
+                    <div class="bg-white rounded-2xl p-6 shadow-sm space-y-4 border-2 border-orange-100">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center space-x-2">
+                            <i class="fa-solid fa-key text-shopee-orange"></i>
+                            <span>ຄວາມປອດໄພລະຫັດຜ່ານຫຼັງບ້ານ (Admin Passcode Security)</span>
+                        </h3>
+                        <p class="text-xs text-slate-500">ຕັ້ງຄ່າລະຫັດຜ່ານ 4-6 ຕົວເລກ ເພື່ອປ້ອງກັນບໍ່ໃຫ້ບຸກຄົນອື່ນເຂົ້າເຖິງລະບົບຫຼັງບ້ານ</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">ລະຫັດຜ່ານໃໝ່ (New Passcode)</label>
+                                <input type="password" id="setting-new-passcode" placeholder="ປ້ອນລະຫັດຜ່ານຕົວເລກ..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm">
+                            </div>
+                        </div>
+                        <button onclick="saveAdminPasscode()" class="bg-slate-800 text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow hover:bg-slate-900 transition">
+                            ປ່ຽນລະຫັດຜ່ານຫຼັງບ້ານ
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
+
+    <!-- Admin Security Passcode Verification Modal -->
+    <div id="admin-passcode-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 text-center space-y-5 animate-in fade-in zoom-in duration-200">
+            <div class="w-16 h-16 bg-orange-100 text-shopee-orange rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-inner">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+                <h3 class="text-xl font-extrabold text-slate-800">ກວດສອບຄວາມປອດໄພ</h3>
+                <p class="text-xs text-slate-500 mt-1">ກະລຸນາປ້ອນລະຫັດຜ່ານເພື່ອເຂົ້າສູ່ລະບົບຫຼັງບ້ານ (ຄ່າເລີ່ມຕົ້ນ: <strong class="text-shopee-orange">8888</strong>)</p>
+            </div>
+
+            <form onsubmit="verifyAdminPasscode(event)" class="space-y-4">
+                <div class="relative">
+                    <input type="password" id="admin-passcode-input" maxlength="6" autofocus required placeholder="••••" class="w-full text-center text-2xl tracking-widest bg-slate-50 border-2 border-slate-200 rounded-2xl py-3.5 focus:outline-none focus:border-shopee-orange font-bold text-slate-800 shadow-inner">
+                </div>
+                <div id="passcode-error-msg" class="text-rose-500 text-xs font-semibold hidden">ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ! ກະລຸນາລອງใหม່</div>
+                
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button type="button" onclick="closeAdminPasscodeModal()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
+                        ຍົກເລີກ
+                    </button>
+                    <button type="submit" class="w-full py-3 bg-shopee-orange hover:bg-shopee-dark text-white font-bold rounded-xl text-sm shadow transition">
+                        ຢືນຢັນເຂົ້າສູ່ລະບົບ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Shipping Label / Receipt Printing Modal with Multiple Sizes -->
     <div id="shipping-label-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
@@ -389,7 +441,6 @@
 
             <!-- Printable Area container -->
             <div class="p-6 overflow-y-auto flex-1 bg-slate-100 flex justify-center items-start">
-                <!-- Exact style matching reference image -->
                 <div id="printable-shipping-label" class="bg-white border-2 border-black w-full max-w-md shadow-lg text-slate-900 font-sans text-xs">
                     <!-- Top Header -->
                     <div class="border-b-2 border-black p-3 text-center bg-white">
@@ -467,7 +518,7 @@
         </div>
     </div>
 
-    <!-- BCEL OnePay Checkout Modal with Branch, Lao Address & Logistics -->
+    <!-- BCEL OnePay Checkout Modal -->
     <div id="checkout-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b pb-3">
@@ -623,7 +674,9 @@
         let currentLang = 'lo';
         let temporaryProductImageBase64 = '';
         let activeDetailedOrderId = null;
+        let adminUnlocked = false;
 
+        let adminPasscode = localStorage.getItem('kaipee_admin_passcode') || '8888';
         let storeSettings = JSON.parse(localStorage.getItem('kaipee_settings')) || { name: 'Kaipee shop', senderPhone: '02028287808' };
         let paymentSettings = JSON.parse(localStorage.getItem('kaipee_payment')) || {
             bankName: 'KAI PEE HOUSE CO., LTD',
@@ -671,6 +724,7 @@
             localStorage.setItem('kaipee_categories', JSON.stringify(categories));
             localStorage.setItem('kaipee_products', JSON.stringify(products));
             localStorage.setItem('kaipee_orders', JSON.stringify(orders));
+            localStorage.setItem('kaipee_admin_passcode', adminPasscode);
         }
 
         window.onload = function() {
@@ -710,6 +764,47 @@
             toggleText.innerText = currentMode === 'admin' ? (lang === 'en' ? 'Switch to Store' : 'ສັບປ່ຽນໄປໜ້າຮ້ານຄ້າ') : (lang === 'en' ? 'Switch to Admin' : 'ສັບປ່ຽນໄປຫຼັງບ້ານ (Admin)');
         }
 
+        function requestAdminAccess() {
+            if (currentMode === 'admin') {
+                switchMode('store');
+                return;
+            }
+            if (adminUnlocked) {
+                toggleView();
+                return;
+            }
+            // Open passcode verification modal
+            document.getElementById('admin-passcode-input').value = '';
+            document.getElementById('passcode-error-msg').classList.add('hidden');
+            document.getElementById('admin-passcode-modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('admin-passcode-input').focus(), 100);
+        }
+
+        function closeAdminPasscodeModal() {
+            document.getElementById('admin-passcode-modal').classList.add('hidden');
+        }
+
+        function verifyAdminPasscode(e) {
+            e.preventDefault();
+            const entered = document.getElementById('admin-passcode-input').value.trim();
+            if (entered === adminPasscode) {
+                adminUnlocked = true;
+                closeAdminPasscodeModal();
+                toggleView();
+                showToast('ຢືນຢັນລະຫັດຜ່ານສຳເລັດ ยินดีต้อนรับสู่ระบบหลังบ้าน');
+            } else {
+                document.getElementById('passcode-error-msg').classList.remove('hidden');
+                document.getElementById('admin-passcode-input').value = '';
+                document.getElementById('admin-passcode-input').focus();
+            }
+        }
+
+        function lockAdminSession() {
+            adminUnlocked = false;
+            switchMode('store');
+            showToast('ລັອກອອກຈາກລະບົບຫຼັງບ້ານແລ້ວ');
+        }
+
         function toggleView() {
             currentMode = currentMode === 'store' ? 'admin' : 'store';
             document.getElementById('store-view').classList.toggle('hidden');
@@ -720,7 +815,16 @@
         }
 
         function switchMode(mode) {
-            if (currentMode !== mode) toggleView();
+            if (currentMode !== mode) {
+                if (mode === 'admin') {
+                    requestAdminAccess();
+                } else {
+                    currentMode = 'store';
+                    document.getElementById('store-view').classList.remove('hidden');
+                    document.getElementById('admin-view').classList.add('hidden');
+                    document.getElementById('view-toggle-text').innerText = 'ສະຫຼັບປ່ຽນໄປຫຼັງບ້ານ (Admin)';
+                }
+            }
         }
 
         function showToast(message) {
@@ -1201,6 +1305,18 @@
             saveAllData();
             refreshUI();
             showToast('ບັນທຶກຕັ້ງຄ່າຮ້ານຄ້າສຳເລັດ!');
+        }
+
+        function saveAdminPasscode() {
+            const newPin = document.getElementById('setting-new-passcode').value.trim();
+            if (newPin.length < 4) {
+                showToast('ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 4 ຕົວເລກ');
+                return;
+            }
+            adminPasscode = newPin;
+            saveAllData();
+            document.getElementById('setting-new-passcode').value = '';
+            showToast('່ຽນລະຫັດຜ່ານຫຼັງບ້ານສຳເລັດ!');
         }
     </script>
 </body>
