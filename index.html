@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kaipee House - Online Store & Admin Dashboard</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -77,7 +74,7 @@
                 </button>
             </div>
 
-            <!-- Language Switcher -->
+            <!-- Language Switcher & Quick Cart -->
             <div class="flex items-center space-x-3">
                 <select id="lang-switcher" onchange="changeLanguage(this.value)" class="bg-white/20 text-white border-0 rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none cursor-pointer">
                     <option value="lo" class="text-slate-800" selected>ລາວ (Lao)</option>
@@ -252,7 +249,7 @@
                 <div id="admin-tab-categories" class="admin-content hidden space-y-6">
                     <div class="bg-white rounded-2xl p-6 shadow-sm flex items-center justify-between">
                         <h3 class="text-lg font-bold text-slate-800">ຈັດການໝວດໝູ່ສິນຄ້າ</h3>
-                        <button onclick="openCategoryModal()" class="bg-shopee-orange text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition shadow">+ ເເພີ່ມໝວດໝູ່</button>
+                        <button onclick="openCategoryModal()" class="bg-shopee-orange text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition shadow">+ ເພີ່ມໝວດໝູ່</button>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                         <table class="w-full text-left text-sm">
@@ -482,7 +479,7 @@
             </div>
 
             <div class="text-center space-y-2">
-                <p class="text-xs text-slate-500">ສະແກນ QR Code ນี้ຜ່ານແອັບພລິເຄຊັນ <strong>BCEL One</strong> ຂອງທ່ານ</p>
+                <p class="text-xs text-slate-500">ສະແກນ QR Code ນີ້ຜ່ານແອັບພລິເຄຊັນ <strong>BCEL One</strong> ຂອງທ່ານ</p>
                 <div class="p-2 bg-slate-50 rounded-2xl border inline-block">
                     <img id="modal-bcel-qr" src="" class="w-36 h-36 object-contain rounded-xl mx-auto">
                 </div>
@@ -699,6 +696,12 @@
             renderAdminOrders();
             populateProductCategoryDropdown();
             document.getElementById('store-brand-name').innerText = storeSettings.name || 'KaipeeHouse';
+        }
+
+        function populateProductCategoryDropdown() {
+            const select = document.getElementById('product-category-select');
+            if (!select) return;
+            select.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
         }
 
         function changeLanguage(lang) {
@@ -927,7 +930,6 @@
             document.getElementById('stat-total-profit').innerText = `₭${orders.reduce((sum, o) => sum + (o.totalProfit || 0), 0).toLocaleString()}`;
             document.getElementById('stat-total-orders').innerText = orders.length;
 
-            // Count per logistics
             let countAnousith = 0;
             let countMixay = 0;
             let countHal = 0;
