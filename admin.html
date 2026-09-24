@@ -670,30 +670,6 @@
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
-    <!-- Firebase SDK Integration -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyBuJL5aitVY84cyKt-TJYBvV2e1lPJLsWM",
-          authDomain: "kaipee888.firebaseapp.com",
-          projectId: "kaipee888",
-          storageBucket: "kaipee888.firebasestorage.app",
-          messagingSenderId: "162396464401",
-          appId: "1:162396464401:web:216bc2a9820f9d7bef18b0",
-          measurementId: "G-5E8QFVVPWZ"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // เก็บอ้างอิงไว้ใช้งานร่วมกับระบบหลัก
-        window.db = db;
-        window.firebaseModules = { collection, getDocs, addDoc, setDoc, doc, deleteDoc };
-        console.log("Kaipee House connected to Firebase successfully!");
-    </script>
-
     <script>
         let currentLang = 'lo';
         let temporaryProductImageBase64 = '';
@@ -1334,56 +1310,14 @@
         function saveAdminPasscode() {
             const newPin = document.getElementById('setting-new-passcode').value.trim();
             if (newPin.length < 4) {
-                showToast('ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວເລກ');
+                showToast('ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 4 ຕົວເລກ');
                 return;
             }
             adminPasscode = newPin;
             saveAllData();
             document.getElementById('setting-new-passcode').value = '';
-            showToast('ປ່ຽນລະຫັດຜ່ານຫຼັງບ້ານສຳເລັດ!');
-        }function saveAllData() {
-    localStorage.setItem('kaipee_settings', JSON.stringify(storeSettings));
-    localStorage.setItem('kaipee_payment', JSON.stringify(paymentSettings));
-    localStorage.setItem('kaipee_categories', JSON.stringify(categories));
-    localStorage.setItem('kaipee_products', JSON.stringify(products));
-    localStorage.setItem('kaipee_orders', JSON.stringify(orders));
-    localStorage.setItem('kaipee_admin_passcode', adminPasscode);
-
-    if (typeof window.db !== 'undefined' && window.firebaseModules) {
-        try {
-            window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "settings", "storeConfig"), {
-                storeSettings: storeSettings,
-                paymentSettings: paymentSettings,
-                adminPasscode: adminPasscode
-            });
-        } catch (err) {
-            console.error("Cloud sync error:", err);
+            showToast('່ຽນລະຫັດຜ່ານຫຼັງບ້ານສຳເລັດ!');
         }
-    }
-}
-
-       // ระบบซิงค์ข้อมูล Cloud Firebase อัตโนມัติ
-    if (typeof window.db !== 'undefined' && window.firebaseModules) {
-        window.firebaseModules.onSnapshot(window.firebaseModules.collection(window.db, "categories"), (snapshot) => {
-            if (!snapshot.empty) {
-                window.categories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                localStorage.setItem('kaipee_categories', JSON.stringify(window.categories));
-                if (typeof window.refreshUI === 'function') window.refreshUI();
-            }
-        });
-        window.firebaseModules.onSnapshot(window.firebaseModules.collection(window.db, "products"), (snapshot) => {
-            if (!snapshot.empty) {
-                window.products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                localStorage.setItem('kaipee_products', JSON.stringify(window.products));
-                if (typeof window.refreshUI === 'function') window.refreshUI();
-            }
-        });
-        window.firebaseModules.onSnapshot(window.firebaseModules.collection(window.db, "orders"), (snapshot) => {
-            window.orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            localStorage.setItem('kaipee_orders', JSON.stringify(window.orders));
-            if (typeof window.refreshUI === 'function') window.refreshUI();
-        });
-    }
- </script>
+    </script>
 </body>
 </html>
