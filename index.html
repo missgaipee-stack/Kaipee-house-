@@ -670,6 +670,30 @@
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
+    <!-- Firebase SDK Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBuJL5aitVY84cyKt-TJYBvV2e1lPJLsWM",
+          authDomain: "kaipee888.firebaseapp.com",
+          projectId: "kaipee888",
+          storageBucket: "kaipee888.firebasestorage.app",
+          messagingSenderId: "162396464401",
+          appId: "1:162396464401:web:216bc2a9820f9d7bef18b0",
+          measurementId: "G-5E8QFVVPWZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // เก็บอ้างอิงไว้ใช้งานร่วมกับระบบหลัก
+        window.db = db;
+        window.firebaseModules = { collection, getDocs, addDoc, setDoc, doc, deleteDoc };
+        console.log("Kaipee House connected to Firebase successfully!");
+    </script>
+
     <script>
         let currentLang = 'lo';
         let temporaryProductImageBase64 = '';
@@ -1310,14 +1334,15 @@
         function saveAdminPasscode() {
             const newPin = document.getElementById('setting-new-passcode').value.trim();
             if (newPin.length < 4) {
-                showToast('ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວເລກ');
+                showToast('ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 4 ຕົວເລກ');
                 return;
             }
             adminPasscode = newPin;
             saveAllData();
             document.getElementById('setting-new-passcode').value = '';
-            showToast('່ຽນລະຫັດຜ່ານຫຼັງບ້ານສຳເລັດ!');
+            showToast('ປ່ຽນລະຫັດຜ່ານຫຼັງບ້ານສຳເລັດ!');
         }
     </script>
 </body>
 </html>
+
