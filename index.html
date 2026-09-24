@@ -1341,8 +1341,50 @@
             saveAllData();
             document.getElementById('setting-new-passcode').value = '';
             showToast('ປ່ຽນລະຫັດຜ່ານຫຼັງບ້ານສຳເລັດ!');
+        }function saveAllData() {
+    localStorage.setItem('kaipee_settings', JSON.stringify(storeSettings));
+    localStorage.setItem('kaipee_payment', JSON.stringify(paymentSettings));
+    localStorage.setItem('kaipee_categories', JSON.stringify(categories));
+    localStorage.setItem('kaipee_products', JSON.stringify(products));
+    localStorage.setItem('kaipee_orders', JSON.stringify(orders));
+    localStorage.setItem('kaipee_admin_passcode', adminPasscode);
+
+    if (typeof window.db !== 'undefined' && window.firebaseModules) {
+        try {
+            window.firebaseModules.setDoc(window.firebaseModules.doc(window.db, "settings", "storeConfig"), {
+                storeSettings: storeSettings,
+                paymentSettings: paymentSettings,
+                adminPasscode: adminPasscode
+            });
+        } catch (err) {
+            console.error("Cloud sync error:", err);
         }
-    </script>
+    }
+}
+
+       // ระบบซิงค์ข้อมูล Cloud Firebase อัตโนມัติ
+    if (typeof window.db !== 'undefined' && window.firebaseModules) {
+        window.firebaseModules.onSnapshot(window.firebaseModules.collection(window.db, "categories"), (snapshot) => {
+            if (!snapshot.empty) {
+                window.categories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                localStorage.setItem('kaipee_categories', JSON.stringify(window.categories));
+                if (typeof window.refreshUI === 'function') window.refreshUI();
+            }
+        });
+        window.firebaseModules.onSnapshot(window.firebaseModules.collection(window.db, "products"), (snapshot) => {
+            if (!snapshot.empty) {
+                window.products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                localStorage.setItem('kaipee_products', JSON.stringify(window.products));
+                if (typeof window.refreshUI === 'function') window.refreshUI();
+            }
+        });
+        window.firebaseModules.onSnapshot(window.firebaseModules.collection(window.db, "orders"), (snapshot) => {
+            window.orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            localStorage.setItem('kaipee_orders', JSON.stringify(window.orders));
+            if (typeof window.refreshUI === 'function') window.refreshUI();
+        });
+    }
+ </script>
 </body>
 </html>
 
